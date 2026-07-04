@@ -14,7 +14,7 @@ namespace AndroidSyncControl.DataClass
         public int Timeout { get; set; } = 5000;
         public bool UseGpu { get; set; } = true;
 
-        /// <summary>UI color theme: "Dark" or "Light".</summary>
-        public string Theme { get; set; } = "Dark";
+        /// <summary>UI theme mode: "System" (follow OS), "Light" or "Dark".</summary>
+        public string Theme { get; set; } = "System";
     }
 }

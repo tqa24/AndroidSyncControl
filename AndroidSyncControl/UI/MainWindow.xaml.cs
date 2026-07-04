@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -97,15 +97,31 @@ namespace AndroidSyncControl.UI
 
         private void btn_theme_Click(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Toggle();
+            ThemeManager.Cycle(); // System -> Light -> Dark -> System
             UpdateThemeGlyph();
         }
 
         private void UpdateThemeGlyph()
         {
-            // Show the icon of the theme you'll switch TO: sun (light) while dark, moon (dark) while light.
-            if (themeGlyph != null)
-                themeGlyph.Text = ThemeManager.Current == AppTheme.Dark ? "" : "";
+            if (btn_theme == null || themeGlyph == null)
+                return;
+
+            // Segoe MDL2 Assets: E713 Settings (System), E706 Brightness (Light), E708 QuietHours (Dark).
+            switch (ThemeManager.CurrentMode)
+            {
+                case ThemeMode.Light:
+                    themeGlyph.Text = "";
+                    btn_theme.ToolTip = "Giao diện: Sáng (bấm để đổi)";
+                    break;
+                case ThemeMode.Dark:
+                    themeGlyph.Text = "";
+                    btn_theme.ToolTip = "Giao diện: Tối (bấm để đổi)";
+                    break;
+                default:
+                    themeGlyph.Text = "";
+                    btn_theme.ToolTip = "Giao diện: Theo hệ thống (bấm để đổi)";
+                    break;
+            }
         }
 
         private void btn_about_Click(object sender, RoutedEventArgs e)
