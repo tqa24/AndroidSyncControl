@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 using System.Timers;
 using TqkLibrary.AdbDotNet;
 using AndroidSyncControl.UI.ViewModels;
+using AndroidSyncControl.UI.Helpers;
+using AndroidSyncControl.Themes;
+using AndroidSyncControl.Themes.Enums;
 using TqkLibrary.Scrcpy;
 
 namespace AndroidSyncControl.UI
@@ -30,6 +33,10 @@ namespace AndroidSyncControl.UI
         {
             InitializeComponent();
             this.mainWVM = this.DataContext as MainWVM;
+            // Attach the WM_GETMINMAXINFO hook first, then maximize once it is active so
+            // the initial maximized bounds are constrained to the work area (no overflow).
+            WindowMaximizeHelper.Enable(this);
+            this.SourceInitialized += (s, e) => this.WindowState = WindowState.Maximized;
             this.Loaded += MainWindow_Loaded;
             this.Closed += MainWindow_Closed;
 
@@ -55,7 +62,71 @@ namespace AndroidSyncControl.UI
             mainWVM.DeviceViews.CollectionChanged += DeviceViews_CollectionChanged;
             timer.Start();
             mainGrid.Width = 0;
+            UpdateThemeGlyph();
+            UpdateMaximizeGlyph();
         }
+
+        #region Title bar / window chrome
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                ToggleMaximize();
+                return;
+            }
+            if (e.ButtonState == MouseButtonState.Pressed)
+                this.DragMove();
+        }
+
+        private void btn_min_Click(object sender, RoutedEventArgs e)
+            => this.WindowState = WindowState.Minimized;
+
+        private void btn_max_Click(object sender, RoutedEventArgs e)
+            => ToggleMaximize();
+
+        private void btn_close_Click(object sender, RoutedEventArgs e)
+            => this.Close();
+
+        private void ToggleMaximize()
+            => this.WindowState = this.WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+
+        private void Window_StateChanged(object sender, EventArgs e)
+            => UpdateMaximizeGlyph();
+
+        private void UpdateMaximizeGlyph()
+        {
+            // E922 = Maximize, E923 = Restore (Segoe MDL2 Assets)
+            if (maxGlyph != null)
+                maxGlyph.Text = this.WindowState == WindowState.Maximized ? "" : "";
+        }
+
+        private void btn_theme_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.Toggle();
+            UpdateThemeGlyph();
+        }
+
+        private void UpdateThemeGlyph()
+        {
+            // Show the icon of the theme you'll switch TO: sun (light) while dark, moon (dark) while light.
+            if (themeGlyph != null)
+                themeGlyph.Text = ThemeManager.Current == AppTheme.Dark ? "" : "";
+        }
+
+        private void btn_about_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Android Sync Control\r\n\r\nMulti-device Android mirror & control.\r\n" +
+                "Powered by scrcpy.",
+                "About",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        #endregion Title bar / window chrome
 
         private void DeviceViews_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
