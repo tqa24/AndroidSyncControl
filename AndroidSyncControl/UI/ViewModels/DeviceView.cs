@@ -13,6 +13,7 @@ using System.Windows;
 using TqkLibrary.Scrcpy.Interfaces;
 using TqkLibrary.Scrcpy.Enums;
 using TqkLibrary.Scrcpy.Configs;
+using TqkLibrary.AudioPlayer.XAudio2;
 
 namespace AndroidSyncControl.UI.ViewModels
 {
@@ -21,6 +22,9 @@ namespace AndroidSyncControl.UI.ViewModels
         readonly Scrcpy scrcpy;
         readonly Adb adb;
         readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        readonly object _audioLock = new object();
+        CancellationTokenSource _audioCts;
+        Task _audioTask;
         bool isStop = false;
         public DeviceView(string DeviceId)
         {
@@ -44,6 +48,7 @@ namespace AndroidSyncControl.UI.ViewModels
         {
             isStop = true;
             cancellationTokenSource.Cancel();
+            StopAudio();
             ScrcpyUiView?.Dispose();
             scrcpy.Dispose();
             cancellationTokenSource.Dispose();
@@ -75,6 +80,14 @@ namespace AndroidSyncControl.UI.ViewModels
         {
             get { return _IsSync; }
             set { _IsSync = value; NotifyPropertyChange(); NotifyPropertyChange(nameof(Control)); }
+        }
+
+        // Checkbox (2): true = phát âm thanh thiết bị ra loa PC; false = đọc & bỏ dòng byte (drain) không phát.
+        bool _IsSpeaker = true;
+        public bool IsSpeaker
+        {
+            get { return _IsSpeaker; }
+            set { _IsSpeaker = value; NotifyPropertyChange(); }
         }
 
         public ScrcpyUiView ScrcpyUiView { get; }
@@ -180,7 +193,7 @@ namespace AndroidSyncControl.UI.ViewModels
                         ScrcpyServerAndroidPath = "/sdcard/scrcpy-server-AndroidSyncControl-{ver}.jar",
                         AudioConfig = new AudioConfig()
                         {
-                            IsAudio = false,
+                            IsAudio = Singleton.Setting.Setting.IsAudio,
                         },
                         IsControl = true,
                         AndroidConfig = new()
@@ -210,6 +223,7 @@ namespace AndroidSyncControl.UI.ViewModels
                 {
                     //this.ScrcpyUiView = scrcpy.InitScrcpyUiView();
                     isStop = false;
+                    StartAudio();
                     return true;
                 }
                 else
@@ -222,7 +236,127 @@ namespace AndroidSyncControl.UI.ViewModels
         public void Stop()
         {
             isStop = true;
+            StopAudio();
             scrcpy.Stop();
+        }
+
+        /// <summary>
+        /// Bắt đầu luồng phát âm thanh khi checkbox (1) IsAudio đang bật.
+        /// Gọi sau mỗi lần connect thành công (kể cả reconnect).
+        /// </summary>
+        void StartAudio()
+        {
+            if (!Singleton.Setting.Setting.IsAudio)
+                return;
+            lock (_audioLock)
+            {
+                StopAudio_NoLock();
+                var cts = new CancellationTokenSource();
+                _audioCts = cts;
+                _audioTask = Task.Factory.StartNew(
+                    () => AudioLoop(cts.Token),
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default);
+            }
+        }
+
+        void StopAudio()
+        {
+            lock (_audioLock)
+                StopAudio_NoLock();
+        }
+
+        void StopAudio_NoLock()
+        {
+            if (_audioCts != null)
+            {
+                try { _audioCts.Cancel(); } catch { }
+                _audioCts = null;
+            }
+            _audioTask = null;
+        }
+
+        /// <summary>
+        /// Đọc PCM đã giải mã từ scrcpy và phát ra loa PC qua XAudio2.
+        /// - IsSpeaker bật (mặc định): queue dữ liệu vào source voice (phát ra loa).
+        /// - IsSpeaker tắt: vẫn đọc để tiêu thụ (drain) dòng byte, nhưng không phát.
+        /// Thoát khi bị hủy hoặc scrcpy mất kết nối (Read trả 0).
+        /// </summary>
+        void AudioLoop(CancellationToken token)
+        {
+            const int channels = 2;
+            const int sampleRate = 48000;
+            const int bitsPerSample = 16;
+
+            XAudio2Engine engine = null;
+            XAudio2MasterVoice masterVoice = null;
+            XAudio2SourceVoice sourceVoice = null;
+            try
+            {
+                engine = new XAudio2Engine();
+                masterVoice = engine.CreateMasterVoice(channels, sampleRate);
+                sourceVoice = masterVoice.CreateSourceVoice(channels, sampleRate, bitsPerSample, WaveFormatTag.WAVE_FORMAT_PCM);
+                sourceVoice.Start();
+
+                ScrcpyAudioStream audioStream = scrcpy.GetAudioStream(AVSampleFormat.S16, sampleRate, channels);
+                byte[] buffer = new byte[sampleRate * channels * (bitsPerSample / 8) / 10]; // ~100ms
+                bool speakerOn = true;
+
+                while (!token.IsCancellationRequested)
+                {
+                    int read = audioStream.Read(buffer, 0, buffer.Length);
+                    if (read == 0)
+                        break; // scrcpy mất kết nối
+
+                    if (IsSpeaker)
+                    {
+                        if (!speakerOn)
+                        {
+                            sourceVoice.Start();
+                            speakerOn = true;
+                        }
+
+                        byte[] frame = new byte[read];
+                        Array.Copy(buffer, 0, frame, 0, read);
+
+                        QueueResult queueResult;
+                        do
+                        {
+                            queueResult = sourceVoice.QueueFrame(frame);
+                            if (queueResult == QueueResult.QueueFull)
+                            {
+                                if (token.IsCancellationRequested || !IsSpeaker)
+                                    break;
+                                Thread.Sleep(10);
+                            }
+                        }
+                        while (queueResult == QueueResult.QueueFull);
+
+                        if (queueResult == QueueResult.Failed)
+                            break;
+                    }
+                    else if (speakerOn)
+                    {
+                        // Vừa tắt loa: dừng và xóa buffer đang chờ để cắt tiếng ngay.
+                        sourceVoice.Stop();
+                        sourceVoice.FlushSourceBuffers();
+                        speakerOn = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Debug.WriteLine($"AudioLoop error: {ex}");
+#endif
+            }
+            finally
+            {
+                try { sourceVoice?.Dispose(); } catch { }
+                try { masterVoice?.Dispose(); } catch { }
+                try { engine?.Dispose(); } catch { }
+            }
         }
     }
 }

@@ -45,6 +45,8 @@
                        ToolTip="Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = không giới hạn (kích thước gốc). Áp dụng khi kết nối lại."/>
             <CheckBox Content="GPU" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
                       ToolTip="Bật: dùng GPU giải mã (D3D11VA). Tắt: dùng CPU (none). Áp dụng khi kết nối lại."/>
+            <CheckBox Content="Audio" VerticalAlignment="Center" IsChecked="{Binding IsAudio}"
+                      ToolTip="Bật: nhận và giải mã luồng âm thanh từ thiết bị. Áp dụng khi kết nối lại."/>
         </st:StackPanel>
 
         <st:StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5" x:Name="stackPanel" SizeChanged="stackPanel_SizeChanged">
@@ -58,6 +60,8 @@
                     <Button x:Name="btn_mainRemove" Content="Ngắt" Width="60" Click="btn_mainRemove_Click"/>
                     <TextBlock Text="{Binding DeviceView.DeviceId}" VerticalAlignment="Center"/>
                     <CheckBox Content="Đồng bộ" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSync}"/>
+                    <CheckBox Content="Loa" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSpeaker}"
+                              ToolTip="Bật: phát âm thanh thiết bị ra loa PC. Tắt: không phát (bỏ qua dòng âm thanh)."/>
                 </StackPanel>
 
                 <Grid Grid.Row="1" x:Name="mainGrid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -85,6 +89,8 @@
 
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5" Wpfui:Spacing.Horizontal="5">
                                 <Button x:Name="btn_Remove" Content="Ngắt" Width="60" Click="btn_Remove_Click"/>
+                                <CheckBox Content="Loa" VerticalAlignment="Center" IsChecked="{Binding IsSpeaker}"
+                                          ToolTip="Bật: phát âm thanh thiết bị ra loa PC. Tắt: không phát (bỏ qua dòng âm thanh)."/>
                                 <TextBlock Text="{Binding DeviceId}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <scrcpy:ScrcpyControl Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
