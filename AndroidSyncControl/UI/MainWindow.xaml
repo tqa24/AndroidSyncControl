@@ -9,7 +9,7 @@
         xmlns:ViewModels="clr-namespace:AndroidSyncControl.UI.ViewModels"
         xmlns:st="http://schemas.spicytaco.io/"
         xmlns:Wpfui="clr-namespace:TqkLibrary.WpfUi.UserControls;assembly=TqkLibrary.WpfUi"
-        xmlns:Xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:ctrl="clr-namespace:AndroidSyncControl.UI.Controls"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
         Title="Android Sync Control" Height="720" Width="1200" MinWidth="800" MinHeight="500"
@@ -110,19 +110,13 @@
 
                     <TextBlock Text="MaxFps" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
                                ToolTip="Giới hạn FPS tối đa của video (hiệu lực 1–120). Áp dụng khi kết nối lại."/>
-                    <Xceed:IntegerUpDown Width="52" Minimum="0" Maximum="120" Value="{Binding MaxFps}" Increment="1"
+                    <ctrl:NumericUpDown Width="58" Minimum="0" Maximum="120" Value="{Binding MaxFps}" Increment="1"
                                VerticalAlignment="Center"
-                               Background="{DynamicResource Brush.Control.Background}"
-                               Foreground="{DynamicResource Brush.Text.Primary}"
-                               BorderBrush="{DynamicResource Brush.Control.BorderBrush}"
                                ToolTip="Giới hạn FPS tối đa của video (hiệu lực 1–120). Áp dụng khi kết nối lại."/>
                     <TextBlock Text="MaxSize" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
                                ToolTip="Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = không giới hạn (kích thước gốc). Áp dụng khi kết nối lại."/>
-                    <Xceed:IntegerUpDown Width="62" Minimum="0" Value="{Binding MaxSize}" Increment="8"
+                    <ctrl:NumericUpDown Width="68" Minimum="0" Value="{Binding MaxSize}" Increment="8"
                                VerticalAlignment="Center"
-                               Background="{DynamicResource Brush.Control.Background}"
-                               Foreground="{DynamicResource Brush.Text.Primary}"
-                               BorderBrush="{DynamicResource Brush.Control.BorderBrush}"
                                ToolTip="Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = không giới hạn (kích thước gốc). Áp dụng khi kết nối lại."/>
                     <CheckBox Content="GPU" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
                               ToolTip="Bật: dùng GPU giải mã (D3D11VA). Tắt: dùng CPU (none). Áp dụng khi kết nối lại."/>
