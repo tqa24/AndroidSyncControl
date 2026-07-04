@@ -20,7 +20,7 @@
         StateChanged="Window_StateChanged">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="6" CornerRadius="0"
                             GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
@@ -37,8 +37,10 @@
             </Grid.RowDefinitions>
 
             <!-- ============================ TITLE BAR ============================ -->
-            <Grid Grid.Row="0" Background="{DynamicResource Brush.TitleBar.Background}"
-                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <!-- CaptionHeight in WindowChrome makes this whole row the native caption
+                 (drag to move, drag-from-maximized to restore, double-click to maximize).
+                 Interactive controls opt out via WindowChrome.IsHitTestVisibleInChrome. -->
+            <Grid Grid.Row="0" Background="{DynamicResource Brush.TitleBar.Background}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -54,7 +56,8 @@
                                FontSize="13" FontWeight="SemiBold"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True">
                     <Button x:Name="btn_theme" Style="{StaticResource IconButton}" Click="btn_theme_Click"
                             VerticalAlignment="Center" Margin="0,0,6,0" ToolTip="Đổi giao diện Dark / Light">
                         <TextBlock x:Name="themeGlyph" FontFamily="Segoe MDL2 Assets" FontSize="15" Text="&#xE706;"/>

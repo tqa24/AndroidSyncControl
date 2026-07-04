@@ -68,16 +68,8 @@ namespace AndroidSyncControl.UI
 
         #region Title bar / window chrome
 
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ClickCount == 2)
-            {
-                ToggleMaximize();
-                return;
-            }
-            if (e.ButtonState == MouseButtonState.Pressed)
-                this.DragMove();
-        }
+        // Window dragging, drag-from-maximized-to-restore and double-click-to-maximize
+        // are handled natively by WindowChrome.CaptionHeight (see MainWindow.xaml).
 
         private void btn_min_Click(object sender, RoutedEventArgs e)
             => this.WindowState = WindowState.Minimized;
