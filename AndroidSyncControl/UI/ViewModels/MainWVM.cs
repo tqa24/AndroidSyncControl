@@ -50,6 +50,11 @@ namespace AndroidSyncControl.UI.ViewModels
             get { return Singleton.Setting.Setting.UseGpu; }
             set { Singleton.Setting.Setting.UseGpu = value; NotifyPropertyChange(); Singleton.Setting.Save(); }
         }
+        public bool IsAudio
+        {
+            get { return Singleton.Setting.Setting.IsAudio; }
+            set { Singleton.Setting.Setting.IsAudio = value; NotifyPropertyChange(); Singleton.Setting.Save(); }
+        }
 
         public ObservableCollection<DeviceView> DeviceViews { get; } = new ObservableCollection<DeviceView>();
 
