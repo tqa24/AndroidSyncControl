@@ -6,7 +6,13 @@
 		<LangVersion>latest</LangVersion>
 		<UseWPF>true</UseWPF>
 		<Platforms>x64</Platforms>
+		<ApplicationIcon>Resources\appicon.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Embedded so it can also be used as the WPF Window.Icon (taskbar / alt-tab). -->
+		<Resource Include="Resources\appicon.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="SpicyTaco.AutoGrid" Version="1.2.29" />
