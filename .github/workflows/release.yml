@@ -1,0 +1,97 @@
+name: Release
+
+# CI build + publish. Does NOT run by default: only builds when the head commit of the push
+# contains the marker '[release]'. Also runnable manually (workflow_dispatch).
+#
+# /releases model: each minor line M.N has one GitHub Release named by the tag 'M.N.0'.
+# Each run -> build version 'M.N.<commits-since-tag>' -> upload the app zip
+# (AndroidSyncControl-<version>-<TargetFramework>.zip) as an asset to Release 'M.N.0'
+# + update the notes (ascending, numbered) for the commits since 'M.N.0'.
+#
+# Precondition: tag 'M.N.0' must already exist on origin (GitVersion source + Release name).
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release]')
+    runs-on: windows-latest
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The app targets net8.0-windows; a newer SDK builds it via reference packs, so any
+      # SDK major >= 8 is enough. Only run setup-dotnet when none is present.
+      - name: Check installed .NET SDKs
+        id: dotnet_check
+        shell: pwsh
+        run: |
+          $sdks = if (Get-Command dotnet -ErrorAction SilentlyContinue) { @(dotnet --list-sdks 2>$null) } else { @() }
+          $haveSdk = [bool]($sdks | Where-Object { if ($_ -match '^(\d+)\.') { [int]$Matches[1] -ge 8 } })
+          $install = -not $haveSdk
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "install=$($install.ToString().ToLower())"
+          Write-Host "Installed SDKs:`n$($sdks -join "`n")"
+          Write-Host "Have .NET SDK >= 8: $haveSdk  -> install=$install"
+
+      - name: Setup .NET
+        if: steps.dotnet_check.outputs.install == 'true'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install git-cliff
+        shell: pwsh
+        run: |
+          $ver = "2.13.1"
+          $url = "https://github.com/orhun/git-cliff/releases/download/v$ver/git-cliff-$ver-x86_64-pc-windows-msvc.zip"
+          $zip = Join-Path $env:RUNNER_TEMP "git-cliff.zip"
+          Invoke-WebRequest $url -OutFile $zip
+          $dst = Join-Path $env:RUNNER_TEMP "git-cliff"
+          Expand-Archive $zip -DestinationPath $dst -Force
+          $exe = Get-ChildItem $dst -Recurse -Filter git-cliff.exe | Select-Object -First 1
+          Add-Content -Path $env:GITHUB_PATH -Value $exe.DirectoryName
+
+      - name: Build + publish + zip
+        shell: pwsh
+        run: ./.github/workflows/BuildCI.ps1   # publish + zip only; release handled below
+
+      - name: Create/update Release, upload zip
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = Get-ChildItem ./publish/*.zip | Select-Object -First 1
+          if (-not $zip) { throw "No zip produced by BuildCI.ps1" }
+          if ($zip.BaseName -notmatch '^AndroidSyncControl-(\d+)\.(\d+)\.(\d+)-(.+)$') { throw "Cannot parse version from $($zip.Name)" }
+          $major = $Matches[1]; $minor = $Matches[2]
+          $tag = "$major.$minor.0"   # release tag has no 'v' prefix (matches the 1.0.0 tag)
+          $mn  = "$major.$minor"
+          Write-Host "zip=$($zip.Name)  release-tag=$tag"
+
+          # Release notes: commits since tag M.N.0, ascending, numbered M.N.<n>.
+          # Use range '<tag>..HEAD' (correct topology); template emits '__MN__' -> replace with M.N.
+          $notes = git-cliff --config cliff-release.toml "$tag..HEAD" | Out-String
+          $notes = ($notes -replace '__MN__', $mn).Trim()
+          if ([string]::IsNullOrWhiteSpace($notes)) { $notes = "Release $tag" }
+          Set-Content -Path RELEASE_NOTES.md -Value $notes -Encoding utf8
+
+          # Create Release 'M.N.0' if missing (on the already-pushed tag), else update its notes.
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release edit $tag --notes-file RELEASE_NOTES.md
+          } else {
+            gh release create $tag --title $tag --notes-file RELEASE_NOTES.md --verify-tag
+          }
+
+          # Attach this build's zip (clobber if rebuilding the same version).
+          gh release upload $tag $zip.FullName --clobber
