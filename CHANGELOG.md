@@ -7,6 +7,9 @@ A **timeline read bottom-to-top**: each `## [M.m.0]` is the tag that opened a mi
 commits stacked ABOVE it are that line's successive versions `M.m.1`, `M.m.2`, ... (patch number =
 commits since the tag), newest on top. Each line shows its version, conventional type, and message.
 
+- *(ci)* Add GitHub release workflow [release]
+- *(ci)* Add git-cliff changelog generation
+- *(ci)* Add GitVersion for M.N.<commits> versioning
 - *(feat)* Add device audio output to PC speakers via XAudio2
 - *(feat)* Add app icon (two phones + sync) for exe and window
 - *(feat)* Add System (follow OS) theme mode as default
