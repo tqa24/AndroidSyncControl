@@ -7,6 +7,9 @@ A **timeline read bottom-to-top**: each `## [M.m.0]` is the tag that opened a mi
 commits stacked ABOVE it are that line's successive versions `M.m.1`, `M.m.2`, ... (patch number =
 commits since the tag), newest on top. Each line shows its version, conventional type, and message.
 
+- 1.0.1 *(docs)* Introduce the product in README with screenshots and credits
+## [1.0.0]
+
 - *(ci)* Add GitHub release workflow [release]
 - *(ci)* Add git-cliff changelog generation
 - *(ci)* Add GitVersion for M.N.<commits> versioning

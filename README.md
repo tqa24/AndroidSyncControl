@@ -18,7 +18,7 @@ Built on top of [scrcpy](https://github.com/Genymobile/scrcpy).
 
 ## Features
 
-- **Synchronized control** — Enable *Sync* (`Đồng bộ`) on the main device and every tap and
+- **Synchronized control** — Enable **Sync** on the main device and every tap and
   keystroke is mirrored to all connected devices at once.
 - **Multi-device mirroring** — Display and control many phones side by side in a grid.
   Devices are auto-detected through ADB and can be added or removed on the fly.
@@ -58,7 +58,7 @@ page (`AndroidSyncControl-<version>-net8.0-windows.zip`). No installation requir
    - **Show Main** — put the selected device in the large main panel (fully controllable).
    - **Show ListView** — add the selected device to the grid on the right.
    - **Show All in ListView** — add every detected device to the grid at once.
-4. Tick **Đồng bộ (Sync)** on the main device to control all grid devices simultaneously.
+4. Tick **Sync** on the main device to control all grid devices simultaneously.
 5. Adjust the toolbar to taste.
 
 ### Toolbar reference
@@ -70,9 +70,12 @@ page (`AndroidSyncControl-<version>-net8.0-windows.zip`). No installation requir
 | **MaxSize** | Caps the longest video edge in pixels (multiple of 8). Below 360 = native size. Applied on reconnect. |
 | **GPU** | On: hardware decode via D3D11VA. Off: CPU decode. Applied on reconnect. |
 | **Audio** | On: receive & decode the device audio stream. Applied on reconnect. |
-| **Đồng bộ (Sync)** | Forward the main device's input to all other devices (main panel only). |
-| **Loa (Speaker)** | Play that device's audio through the PC speakers (per device). |
-| **Ngắt (Disconnect)** | Disconnect that device. |
+| **Sync** | Forward the main device's input to all other devices (main panel only). |
+| **Speaker** | Play that device's audio through the PC speakers (per device). |
+| **Disconnect** | Disconnect that device. |
+
+> Note: the app UI is currently in Vietnamese. See [README-vi.md](README-vi.md) for the exact
+> in-app button labels (e.g. *Sync* = `Đồng bộ`, *Speaker* = `Loa`, *Disconnect* = `Ngắt`).
 
 ## Build from source
 
