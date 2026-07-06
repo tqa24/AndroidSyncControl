@@ -1,0 +1,43 @@
+<Project>
+	<!--
+	  Versioning for the app via GitVersion.MsBuild.
+	  Release build => Version = GitVersion Major.Minor.CommitsSinceVersionSource (e.g. 1.0.0).
+	  Debug build   => GitVersion task disabled (offline/fast), Version = 0.0.0-debug.
+	  GitVersion.MsBuild is always referenced (stable restore graph); only the task is
+	  toggled per configuration.
+	-->
+	<PropertyGroup>
+		<EnableGitVersion>true</EnableGitVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<Deterministic>true</Deterministic>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+
+	<!-- Non-Release: skip GitVersion, use a static placeholder version. -->
+	<PropertyGroup Condition="'$(Configuration)' != 'Release'">
+		<DisableGitVersionTask>true</DisableGitVersionTask>
+		<WriteVersionInfoToBuildLog>false</WriteVersionInfoToBuildLog>
+		<GenerateGitVersionInformation>false</GenerateGitVersionInformation>
+		<UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+		<GenerateGitVersionFiles>false</GenerateGitVersionFiles>
+		<Version>0.0.0-debug</Version>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(EnableGitVersion)' == 'true'">
+		<PackageReference Include="GitVersion.MsBuild" Version="6.7.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<Target Name="SetVersionFromGitVersion" AfterTargets="GetVersion" Condition="'$(EnableGitVersion)' == 'true' and '$(DisableGitVersionTask)' != 'true'">
+		<PropertyGroup>
+			<Version>$(GitVersion_Major).$(GitVersion_Minor).$(GitVersion_CommitsSinceVersionSource)</Version>
+			<AssemblyVersion>$(GitVersion_Major).$(GitVersion_Minor).0.0</AssemblyVersion>
+			<FileVersion>$(GitVersion_Major).$(GitVersion_Minor).$(GitVersion_CommitsSinceVersionSource).0</FileVersion>
+			<InformationalVersion>$(Version)</InformationalVersion>
+		</PropertyGroup>
+	</Target>
+</Project>

@@ -1,0 +1,19 @@
+# GitVersion config -- version pattern MAJOR.MINOR.<commits-since-tag>.
+# Tag full SemVer like '1.0.0' (prefix optional 'v'). master/main keep Major.Minor
+# from the tag (increment: None); patch = CommitsSinceVersionSource (commits since tag).
+deployment-mode: ManualDeployment
+tag-prefix: '[vV]?'
+branches:
+  master:
+    regex: ^master$
+    increment: None
+    label: ''
+  main:
+    regex: ^main$
+    increment: None
+    label: ''
+  version-branch:
+    regex: .*
+    increment: None
+    source-branches: []
+    label: ''
