@@ -59,20 +59,22 @@
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Stretch"
                             shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <ComboBox x:Name="cbo_language" Width="120" VerticalAlignment="Center" Margin="0,0,6,0"
+                              DisplayMemberPath="Display" SelectionChanged="cbo_language_SelectionChanged"/>
                     <Button x:Name="btn_theme" Style="{StaticResource IconButton}" Click="btn_theme_Click"
-                            VerticalAlignment="Center" Margin="0,0,6,0" ToolTip="Đổi giao diện Dark / Light">
+                            VerticalAlignment="Center" Margin="0,0,6,0" ToolTip="{DynamicResource Str.Theme.System}">
                         <TextBlock x:Name="themeGlyph" FontFamily="Segoe MDL2 Assets" FontSize="15" Text="&#xE706;"/>
                     </Button>
-                    <Button Content="About" Style="{StaticResource PurpleButton}" VerticalAlignment="Center"
+                    <Button Content="{DynamicResource Str.Btn.About}" Style="{StaticResource PurpleButton}" VerticalAlignment="Center"
                             Margin="0,0,12,0" Click="btn_about_Click"/>
 
-                    <Button Style="{StaticResource WindowControlButton}" Click="btn_min_Click" ToolTip="Thu nhỏ">
+                    <Button Style="{StaticResource WindowControlButton}" Click="btn_min_Click" ToolTip="{DynamicResource Str.Tip.Minimize}">
                         <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="10" Text="&#xE921;"/>
                     </Button>
-                    <Button x:Name="btn_max" Style="{StaticResource WindowControlButton}" Click="btn_max_Click" ToolTip="Phóng to">
+                    <Button x:Name="btn_max" Style="{StaticResource WindowControlButton}" Click="btn_max_Click" ToolTip="{DynamicResource Str.Tip.Maximize}">
                         <TextBlock x:Name="maxGlyph" FontFamily="Segoe MDL2 Assets" FontSize="10" Text="&#xE922;"/>
                     </Button>
-                    <Button Style="{StaticResource WindowCloseButton}" Click="btn_close_Click" ToolTip="Đóng">
+                    <Button Style="{StaticResource WindowCloseButton}" Click="btn_close_Click" ToolTip="{DynamicResource Str.Tip.Close}">
                         <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="10" Text="&#xE8BB;"/>
                     </Button>
                 </StackPanel>
@@ -84,24 +86,24 @@
                     Padding="12,10">
                 <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
                 <st:StackPanel Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" MarginBetweenChildren="6">
-                    <TextBlock Text="Device" VerticalAlignment="Center"
+                    <TextBlock Text="{DynamicResource Str.Toolbar.Device}" VerticalAlignment="Center"
                                Foreground="{DynamicResource Brush.Text.Secondary}"/>
                     <ComboBox ItemsSource="{Binding DeviceNameList}" SelectedItem="{Binding DeviceNameListSelected}"
-                              Width="200" VerticalAlignment="Center" Tag="Chọn thiết bị…">
+                              Width="200" VerticalAlignment="Center" Tag="{DynamicResource Str.Combo.SelectDevice}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Width="96" Content="Show Main" Style="{StaticResource AccentButton}"
+                    <Button Width="96" Content="{DynamicResource Str.Btn.ShowMain}" Style="{StaticResource AccentButton}"
                             x:Name="btn_showMain" Click="btn_showMain_Click"/>
-                    <Button Width="100" Content="Show ListView" x:Name="btn_showListView" Click="btn_showListView_Click"/>
-                    <Button Width="130" Content="Show All in ListView" x:Name="btn_showAllListView" Click="btn_showAllListView_Click"/>
+                    <Button Width="100" Content="{DynamicResource Str.Btn.ShowListView}" x:Name="btn_showListView" Click="btn_showListView_Click"/>
+                    <Button Width="130" Content="{DynamicResource Str.Btn.ShowAllListView}" x:Name="btn_showAllListView" Click="btn_showAllListView_Click"/>
 
                     <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
 
-                    <TextBlock Text="Size" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                    <TextBlock Text="{DynamicResource Str.Toolbar.Size}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"/>
                     <Slider x:Name="slider" Maximum="100" Minimum="1" Value="{Binding ViewPercent}" Width="180"
                             VerticalAlignment="Center" ValueChanged="slider_ValueChanged" ToolTip="{Binding ViewPercent}"/>
                     <TextBlock VerticalAlignment="Center" MinWidth="34"
@@ -109,20 +111,20 @@
 
                     <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
 
-                    <TextBlock Text="MaxFps" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
-                               ToolTip="Giới hạn FPS tối đa của video (hiệu lực 1–120). Áp dụng khi kết nối lại."/>
+                    <TextBlock Text="{DynamicResource Str.Toolbar.MaxFps}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                               ToolTip="{DynamicResource Str.Tip.MaxFps}"/>
                     <ctrl:NumericUpDown Width="58" Minimum="0" Maximum="120" Value="{Binding MaxFps}" Increment="1"
                                VerticalAlignment="Center"
-                               ToolTip="Giới hạn FPS tối đa của video (hiệu lực 1–120). Áp dụng khi kết nối lại."/>
-                    <TextBlock Text="MaxSize" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
-                               ToolTip="Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = không giới hạn (kích thước gốc). Áp dụng khi kết nối lại."/>
+                               ToolTip="{DynamicResource Str.Tip.MaxFps}"/>
+                    <TextBlock Text="{DynamicResource Str.Toolbar.MaxSize}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                               ToolTip="{DynamicResource Str.Tip.MaxSize}"/>
                     <ctrl:NumericUpDown Width="68" Minimum="0" Value="{Binding MaxSize}" Increment="8"
                                VerticalAlignment="Center"
-                               ToolTip="Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = không giới hạn (kích thước gốc). Áp dụng khi kết nối lại."/>
-                    <CheckBox Content="GPU" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
-                              ToolTip="Bật: dùng GPU giải mã (D3D11VA). Tắt: dùng CPU (none). Áp dụng khi kết nối lại."/>
-                    <CheckBox Content="Audio" VerticalAlignment="Center" IsChecked="{Binding IsAudio}"
-                              ToolTip="Bật: nhận và giải mã luồng âm thanh từ thiết bị. Áp dụng khi kết nối lại."/>
+                               ToolTip="{DynamicResource Str.Tip.MaxSize}"/>
+                    <CheckBox Content="{DynamicResource Str.Toolbar.Gpu}" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
+                              ToolTip="{DynamicResource Str.Tip.Gpu}"/>
+                    <CheckBox Content="{DynamicResource Str.Toolbar.Audio}" VerticalAlignment="Center" IsChecked="{Binding IsAudio}"
+                              ToolTip="{DynamicResource Str.Tip.Audio}"/>
                 </st:StackPanel>
                 </ScrollViewer>
             </Border>
@@ -137,11 +139,11 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="0" Wpfui:Spacing.Horizontal="8" Margin="0,0,0,8">
-                        <Button x:Name="btn_mainRemove" Content="Ngắt" Width="64" Click="btn_mainRemove_Click"/>
+                        <Button x:Name="btn_mainRemove" Content="{DynamicResource Str.Btn.Disconnect}" Width="64" Click="btn_mainRemove_Click"/>
                         <TextBlock Text="{Binding DeviceView.DeviceId}" VerticalAlignment="Center"/>
-                        <CheckBox Content="Đồng bộ" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSync}"/>
-                        <CheckBox Content="Loa" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSpeaker}"
-                                  ToolTip="Bật: phát âm thanh thiết bị ra loa PC. Tắt: không phát (bỏ qua dòng âm thanh)."/>
+                        <CheckBox Content="{DynamicResource Str.Check.Sync}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSync}"/>
+                        <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSpeaker}"
+                                  ToolTip="{DynamicResource Str.Tip.Speaker}"/>
                     </StackPanel>
 
                     <Border Grid.Row="1" CornerRadius="10" ClipToBounds="True"
@@ -171,10 +173,10 @@
                                 </Grid.RowDefinitions>
 
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6" Wpfui:Spacing.Horizontal="8">
-                                    <Button x:Name="btn_Remove" Content="Ngắt" Width="60" Click="btn_Remove_Click"/>
+                                    <Button x:Name="btn_Remove" Content="{DynamicResource Str.Btn.Disconnect}" Width="60" Click="btn_Remove_Click"/>
                                     <TextBlock Text="{Binding DeviceId}" VerticalAlignment="Center"/>
-                                    <CheckBox Content="Loa" VerticalAlignment="Center" IsChecked="{Binding IsSpeaker}"
-                                              ToolTip="Bật: phát âm thanh thiết bị ra loa PC. Tắt: không phát (bỏ qua dòng âm thanh)."/>
+                                    <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding IsSpeaker}"
+                                              ToolTip="{DynamicResource Str.Tip.Speaker}"/>
                                 </StackPanel>
                                 <Border Grid.Row="1" CornerRadius="8" ClipToBounds="True">
                                     <scrcpy:ScrcpyControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

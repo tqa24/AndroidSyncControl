@@ -74,9 +74,6 @@ page (`AndroidSyncControl-<version>-net8.0-windows.zip`). No installation requir
 | **Speaker** | Play that device's audio through the PC speakers (per device). |
 | **Disconnect** | Disconnect that device. |
 
-> Note: the app UI is currently in Vietnamese. See [README-vi.md](README-vi.md) for the exact
-> in-app button labels (e.g. *Sync* = `Đồng bộ`, *Speaker* = `Loa`, *Disconnect* = `Ngắt`).
-
 ## Build from source
 
 Requirements: **.NET 8 SDK**, Windows, Visual Studio 2022 (optional).

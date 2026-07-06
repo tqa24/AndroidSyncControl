@@ -1,4 +1,5 @@
 using System.Windows;
+using AndroidSyncControl.Localization;
 using AndroidSyncControl.Themes;
 
 namespace AndroidSyncControl
@@ -10,8 +11,9 @@ namespace AndroidSyncControl
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            // Apply the persisted theme before the main window is created.
+            // Apply the persisted theme and language before the main window is created.
             ThemeManager.Apply(ThemeManager.Parse(Singleton.Setting.Setting.Theme));
+            LanguageManager.Apply(LanguageManager.Parse(Singleton.Setting.Setting.Language));
             base.OnStartup(e);
         }
     }

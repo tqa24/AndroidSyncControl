@@ -17,5 +17,8 @@ namespace AndroidSyncControl.DataClass
 
         /// <summary>UI theme mode: "System" (follow OS), "Light" or "Dark".</summary>
         public string Theme { get; set; } = "System";
+
+        /// <summary>UI language: "English" or "Vietnamese". Empty = follow the Windows display language on first run.</summary>
+        public string Language { get; set; } = "";
     }
 }

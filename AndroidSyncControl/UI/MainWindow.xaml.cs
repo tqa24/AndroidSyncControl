@@ -18,6 +18,7 @@ using AndroidSyncControl.UI.ViewModels;
 using AndroidSyncControl.UI.Helpers;
 using AndroidSyncControl.Themes;
 using AndroidSyncControl.Themes.Enums;
+using AndroidSyncControl.Localization;
 using TqkLibrary.Scrcpy;
 
 namespace AndroidSyncControl.UI
@@ -48,6 +49,7 @@ namespace AndroidSyncControl.UI
 
         private void MainWindow_Closed(object sender, EventArgs e)
         {
+            LanguageManager.LanguageChanged -= OnLanguageChanged;
             using (var v = mainWVM.DeviceView) v?.Stop();
             foreach (var item in mainWVM.DeviceViews)
             {
@@ -62,8 +64,26 @@ namespace AndroidSyncControl.UI
             mainWVM.DeviceViews.CollectionChanged += DeviceViews_CollectionChanged;
             timer.Start();
             mainGrid.Width = 0;
+
+            // Bind the title-bar language dropdown to the current selection. Setting
+            // SelectedItem raises SelectionChanged, but Set() is a no-op for the active
+            // language so no re-entrancy occurs.
+            cbo_language.ItemsSource = LanguageManager.Items;
+            cbo_language.SelectedItem = LanguageManager.Items.FirstOrDefault(x => x.Mode == LanguageManager.CurrentMode);
+            LanguageManager.LanguageChanged += OnLanguageChanged;
+
             UpdateThemeGlyph();
             UpdateMaximizeGlyph();
+        }
+
+        // Refresh the strings that are set from code-behind (theme tooltip). Every other
+        // string is a DynamicResource and updates automatically when the table is swapped.
+        private void OnLanguageChanged() => UpdateThemeGlyph();
+
+        private void cbo_language_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbo_language.SelectedItem is LanguageItem item)
+                LanguageManager.Set(item.Mode);
         }
 
         #region Title bar / window chrome
@@ -111,15 +131,15 @@ namespace AndroidSyncControl.UI
             {
                 case ThemeMode.Light:
                     themeGlyph.Text = "";
-                    btn_theme.ToolTip = "Giao diện: Sáng (bấm để đổi)";
+                    btn_theme.ToolTip = LanguageManager.GetString("Str.Theme.Light");
                     break;
                 case ThemeMode.Dark:
                     themeGlyph.Text = "";
-                    btn_theme.ToolTip = "Giao diện: Tối (bấm để đổi)";
+                    btn_theme.ToolTip = LanguageManager.GetString("Str.Theme.Dark");
                     break;
                 default:
                     themeGlyph.Text = "";
-                    btn_theme.ToolTip = "Giao diện: Theo hệ thống (bấm để đổi)";
+                    btn_theme.ToolTip = LanguageManager.GetString("Str.Theme.System");
                     break;
             }
         }
@@ -127,9 +147,8 @@ namespace AndroidSyncControl.UI
         private void btn_about_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "Android Sync Control\r\n\r\nMulti-device Android mirror & control.\r\n" +
-                "Powered by scrcpy.",
-                "About",
+                LanguageManager.GetString("Str.About.Body"),
+                LanguageManager.GetString("Str.About.Title"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }

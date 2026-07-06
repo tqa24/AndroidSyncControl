@@ -9,6 +9,9 @@
                 <!-- Swappable color palette (index 0). Default = Dark; replaced at
                      startup / toggle by ThemeManager. -->
                 <ResourceDictionary Source="Themes/Colors.Dark.xaml"/>
+                <!-- Swappable UI string table. Default = English; replaced at
+                     startup / selection by LanguageManager. -->
+                <ResourceDictionary Source="Localization/Strings.en.xaml"/>
                 <!-- Control styles referencing the palette via DynamicResource. -->
                 <ResourceDictionary Source="Themes/Controls.xaml"/>
             </ResourceDictionary.MergedDictionaries>
