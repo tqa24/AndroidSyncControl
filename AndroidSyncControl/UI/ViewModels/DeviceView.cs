@@ -36,6 +36,24 @@ namespace AndroidSyncControl.UI.ViewModels
             this.scrcpyUiView = scrcpy.InitScrcpyUiView();
             this.ScrcpyUiView = this.scrcpyUiView;
             this.scrcpy.OnDisconnect += Scrcpy_OnDisconnect;
+            this.scrcpy.Control.OnClipboardReceived += Control_OnClipboardReceived;
+        }
+
+        /// <summary>
+        /// Nhận clipboard mà thiết bị Android đẩy về khi <see cref="ScrcpyServerConfig.ClipboardAutosync"/> bật.
+        /// Core (Scrcpy) chỉ lưu vào LastClipboard, KHÔNG tự ghi vào clipboard Windows nên phải ghi thủ công ở đây.
+        /// Callback chạy trên thread native của scrcpy → marshal về UI thread vì Clipboard yêu cầu STA;
+        /// bọc try/catch vì Clipboard.SetText có thể ném COMException khi clipboard đang bị tiến trình khác khoá.
+        /// </summary>
+        void Control_OnClipboardReceived(IControl control, string data)
+        {
+            if (isStop || string.IsNullOrEmpty(data))
+                return;
+            Application.Current?.Dispatcher?.BeginInvoke(new Action(() =>
+            {
+                try { Clipboard.SetText(data); }
+                catch { /* clipboard dang bi khoa/ban, bo qua */ }
+            }));
         }
 
         ~DeviceView()
@@ -52,6 +70,7 @@ namespace AndroidSyncControl.UI.ViewModels
             isStop = true;
             cancellationTokenSource.Cancel();
             StopAudio();
+            scrcpy.Control.OnClipboardReceived -= Control_OnClipboardReceived;
             scrcpyUiView?.Dispose();
             scrcpy.Dispose();
             cancellationTokenSource.Dispose();
@@ -237,7 +256,7 @@ namespace AndroidSyncControl.UI.ViewModels
                         Cleanup = false,
                         VideoSource = VideoSource.Display,
                         LogLevel = LogLevel.Debug,
-                        ClipboardAutosync = false,
+                        ClipboardAutosync = true,
                         MaxSize = Singleton.Setting.Setting.MaxSize,
                     },
                     IsUseD3D11ForConvert = false,
