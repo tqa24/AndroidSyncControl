@@ -12,7 +12,7 @@
         xmlns:ctrl="clr-namespace:AndroidSyncControl.UI.Controls"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="Android Sync Control" Height="720" Width="1200" MinWidth="800" MinHeight="500"
+        Title="Android Sync Control" Height="896" Width="1828" MinWidth="800" MinHeight="500"
         Icon="/Resources/appicon.ico"
         FontFamily="Segoe UI" FontSize="13"
         Background="{DynamicResource Brush.Window.Background}"
@@ -85,47 +85,47 @@
                     BorderBrush="{DynamicResource Brush.Surface.BorderBrush}" BorderThickness="0,1,0,1"
                     Padding="12,10">
                 <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <st:StackPanel Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" MarginBetweenChildren="6">
-                    <TextBlock Text="{DynamicResource Str.Toolbar.Device}" VerticalAlignment="Center"
+                    <st:StackPanel Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" MarginBetweenChildren="6">
+                        <TextBlock Text="{DynamicResource Str.Toolbar.Device}" VerticalAlignment="Center"
                                Foreground="{DynamicResource Brush.Text.Secondary}"/>
-                    <ComboBox ItemsSource="{Binding DeviceNameList}" SelectedItem="{Binding DeviceNameListSelected}"
+                        <ComboBox ItemsSource="{Binding DeviceNameList}" SelectedItem="{Binding DeviceNameListSelected}"
                               Width="200" VerticalAlignment="Center" Tag="{DynamicResource Str.Combo.SelectDevice}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button Width="96" Content="{DynamicResource Str.Btn.ShowMain}" Style="{StaticResource AccentButton}"
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Content="{DynamicResource Str.Btn.ShowMain}" Style="{StaticResource AccentButton}"
                             x:Name="btn_showMain" Click="btn_showMain_Click"/>
-                    <Button Width="100" Content="{DynamicResource Str.Btn.ShowListView}" x:Name="btn_showListView" Click="btn_showListView_Click"/>
-                    <Button Width="130" Content="{DynamicResource Str.Btn.ShowAllListView}" x:Name="btn_showAllListView" Click="btn_showAllListView_Click"/>
+                        <Button Content="{DynamicResource Str.Btn.ShowListView}" x:Name="btn_showListView" Click="btn_showListView_Click"/>
+                        <Button Content="{DynamicResource Str.Btn.ShowAllListView}" x:Name="btn_showAllListView" Click="btn_showAllListView_Click"/>
 
-                    <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
+                        <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
 
-                    <TextBlock Text="{DynamicResource Str.Toolbar.Size}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"/>
-                    <Slider x:Name="slider" Maximum="100" Minimum="1" Value="{Binding ViewPercent}" Width="180"
+                        <TextBlock Text="{DynamicResource Str.Toolbar.Size}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                        <Slider x:Name="slider" Maximum="150" Minimum="1" Value="{Binding ViewPercent}" Width="180"
                             VerticalAlignment="Center" ValueChanged="slider_ValueChanged" ToolTip="{Binding ViewPercent}"/>
-                    <TextBlock VerticalAlignment="Center" MinWidth="34"
+                        <TextBlock VerticalAlignment="Center" MinWidth="34"
                                Text="{Binding ViewPercent, StringFormat={}{0:0}%}"/>
 
-                    <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
+                        <Border Width="1" Margin="4,2" Background="{DynamicResource Brush.Surface.BorderBrush}"/>
 
-                    <TextBlock Text="{DynamicResource Str.Toolbar.MaxFps}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                        <TextBlock Text="{DynamicResource Str.Toolbar.MaxFps}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
                                ToolTip="{DynamicResource Str.Tip.MaxFps}"/>
-                    <ctrl:NumericUpDown Width="58" Minimum="0" Maximum="120" Value="{Binding MaxFps}" Increment="1"
+                        <ctrl:NumericUpDown Width="58" Minimum="0" Maximum="120" Value="{Binding MaxFps}" Increment="1"
                                VerticalAlignment="Center"
                                ToolTip="{DynamicResource Str.Tip.MaxFps}"/>
-                    <TextBlock Text="{DynamicResource Str.Toolbar.MaxSize}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                        <TextBlock Text="{DynamicResource Str.Toolbar.MaxSize}" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
                                ToolTip="{DynamicResource Str.Tip.MaxSize}"/>
-                    <ctrl:NumericUpDown Width="68" Minimum="0" Value="{Binding MaxSize}" Increment="8"
+                        <ctrl:NumericUpDown Width="68" Minimum="0" Value="{Binding MaxSize}" Increment="8"
                                VerticalAlignment="Center"
                                ToolTip="{DynamicResource Str.Tip.MaxSize}"/>
-                    <CheckBox Content="{DynamicResource Str.Toolbar.Gpu}" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
+                        <CheckBox Content="{DynamicResource Str.Toolbar.Gpu}" VerticalAlignment="Center" IsChecked="{Binding UseGpu}"
                               ToolTip="{DynamicResource Str.Tip.Gpu}"/>
-                    <CheckBox Content="{DynamicResource Str.Toolbar.Audio}" VerticalAlignment="Center" IsChecked="{Binding IsAudio}"
+                        <CheckBox Content="{DynamicResource Str.Toolbar.Audio}" VerticalAlignment="Center" IsChecked="{Binding IsAudio}"
                               ToolTip="{DynamicResource Str.Tip.Audio}"/>
-                </st:StackPanel>
+                    </st:StackPanel>
                 </ScrollViewer>
             </Border>
 
@@ -138,13 +138,21 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Wpfui:Spacing.Horizontal="8" Margin="0,0,0,8">
-                        <Button x:Name="btn_mainRemove" Content="{DynamicResource Str.Btn.Disconnect}" Width="64" Click="btn_mainRemove_Click"/>
-                        <TextBlock Text="{Binding DeviceView.DeviceId}" VerticalAlignment="Center"/>
-                        <CheckBox Content="{DynamicResource Str.Check.Sync}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSync}"/>
-                        <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSpeaker}"
-                                  ToolTip="{DynamicResource Str.Tip.Speaker}"/>
-                    </StackPanel>
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" VerticalAlignment="Center">
+                            <CheckBox Content="{DynamicResource Str.Check.Sync}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSync}"/>
+                            <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding DeviceView.IsSpeaker}"
+                                      ToolTip="{DynamicResource Str.Tip.Speaker}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DeviceView.DeviceId}" VerticalAlignment="Center"/>
+                            <Button x:Name="btn_mainRemove" Content="{DynamicResource Str.Btn.Disconnect}" Click="btn_mainRemove_Click"/>
+                        </StackPanel>
+                    </Grid>
 
                     <Border Grid.Row="1" CornerRadius="10" ClipToBounds="True"
                             Background="{DynamicResource Brush.Surface.Background}"
@@ -172,12 +180,20 @@
                                     <RowDefinition Height="1*"/>
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6" Wpfui:Spacing.Horizontal="8">
-                                    <Button x:Name="btn_Remove" Content="{DynamicResource Str.Btn.Disconnect}" Width="60" Click="btn_Remove_Click"/>
-                                    <TextBlock Text="{Binding DeviceId}" VerticalAlignment="Center"/>
-                                    <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding IsSpeaker}"
-                                              ToolTip="{DynamicResource Str.Tip.Speaker}"/>
-                                </StackPanel>
+                                <Grid Grid.Row="0" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" VerticalAlignment="Center">
+                                        <CheckBox Content="{DynamicResource Str.Check.Speaker}" VerticalAlignment="Center" IsChecked="{Binding IsSpeaker}"
+                                                  ToolTip="{DynamicResource Str.Tip.Speaker}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Wpfui:Spacing.Horizontal="8" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DeviceId}" VerticalAlignment="Center"/>
+                                        <Button x:Name="btn_Remove" Content="{DynamicResource Str.Btn.Disconnect}" Click="btn_Remove_Click"/>
+                                    </StackPanel>
+                                </Grid>
                                 <Border Grid.Row="1" CornerRadius="8" ClipToBounds="True">
                                     <scrcpy:ScrcpyControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                         IsMouseHandler="True" IsKeyHandler="True"
