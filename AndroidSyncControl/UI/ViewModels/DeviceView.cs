@@ -21,17 +21,20 @@ namespace AndroidSyncControl.UI.ViewModels
     {
         readonly Scrcpy scrcpy;
         readonly Adb adb;
+        readonly ScrcpyUiView scrcpyUiView; // owned instance, disposed in Dispose (property may be null'd on detach)
         readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         readonly object _audioLock = new object();
         CancellationTokenSource _audioCts;
         Task _audioTask;
         bool isStop = false;
+        bool _isDetached = false;
         public DeviceView(string DeviceId)
         {
             this.scrcpy = new Scrcpy(DeviceId);
             this.adb = new Adb(DeviceId);
             this.Control = scrcpy.Control;
-            this.ScrcpyUiView = scrcpy.InitScrcpyUiView();
+            this.scrcpyUiView = scrcpy.InitScrcpyUiView();
+            this.ScrcpyUiView = this.scrcpyUiView;
             this.scrcpy.OnDisconnect += Scrcpy_OnDisconnect;
         }
 
@@ -49,7 +52,7 @@ namespace AndroidSyncControl.UI.ViewModels
             isStop = true;
             cancellationTokenSource.Cancel();
             StopAudio();
-            ScrcpyUiView?.Dispose();
+            scrcpyUiView?.Dispose();
             scrcpy.Dispose();
             cancellationTokenSource.Dispose();
         }
@@ -70,7 +73,9 @@ namespace AndroidSyncControl.UI.ViewModels
         IControl _Control;
         public IControl Control
         {
-            get { return IsSync ? _Control : RawControl; }
+            // After DetachView() the WPF ScrcpyControl must not touch the (about-to-be) disposed scrcpy,
+            // so the bound Control resolves to null just like the main panel does via `DeviceView = null`.
+            get { return _isDetached ? null : (IsSync ? _Control : RawControl); }
             set { _Control = value; NotifyPropertyChange(); }
         }
 
@@ -90,8 +95,28 @@ namespace AndroidSyncControl.UI.ViewModels
             set { _IsSpeaker = value; NotifyPropertyChange(); }
         }
 
-        public ScrcpyUiView ScrcpyUiView { get; }
+        ScrcpyUiView _ScrcpyUiView;
+        public ScrcpyUiView ScrcpyUiView
+        {
+            get { return _ScrcpyUiView; }
+            private set { _ScrcpyUiView = value; NotifyPropertyChange(); }
+        }
         public IControl RawControl { get { return scrcpy.Control; } }
+
+        /// <summary>
+        /// Ngắt tham chiếu mà WPF ScrcpyControl đang bind (ScrcpyUiView, Control) TRƯỚC khi scrcpy bị dispose.
+        /// Handler CompositionTarget.Rendering của control đọc <c>ScrcpyUiView?.Scrcpy.ScreenSize</c> mỗi frame;
+        /// nếu scrcpy đã dispose mà control còn giữ ScrcpyUiView thì GetScreenSize() ném ObjectDisposedException
+        /// ngay trong render loop của WPF (không bắt được → crash).
+        /// Phải gọi khi item CÒN đang được bind (trước khi Remove khỏi ItemsSource) để binding lan null xuống
+        /// control một cách đồng bộ — giống cách panel main làm qua <c>mainWVM.DeviceView = null</c>.
+        /// </summary>
+        public void DetachView()
+        {
+            _isDetached = true;
+            NotifyPropertyChange(nameof(Control));
+            ScrcpyUiView = null;
+        }
 
         double _Width = 250;
         double _Height = 500;

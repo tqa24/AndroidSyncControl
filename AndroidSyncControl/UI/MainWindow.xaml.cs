@@ -50,9 +50,11 @@ namespace AndroidSyncControl.UI
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             LanguageManager.LanguageChanged -= OnLanguageChanged;
+            mainWVM.DeviceView?.DetachView();
             using (var v = mainWVM.DeviceView) v?.Stop();
             foreach (var item in mainWVM.DeviceViews)
             {
+                item.DetachView();
                 using (var v = item) v?.Stop();
             }
         }
@@ -232,21 +234,10 @@ namespace AndroidSyncControl.UI
                 if (mainWVM.DeviceNameListSelected != null)
                 {
                     string deviceid = mainWVM.DeviceNameListSelected.Name;
-#if DEBUG
-                    for (int i = 0; i < 3; i++)
-                    {
-                        DeviceView deviceView = new DeviceView(deviceid);
-                        //deviceView.OnConencted += DeviceView_OnConencted;
-                        mainWVM.DeviceViews.Add(deviceView);
-                        await deviceView.Start();
-                        deviceView.SliderChange(mainWVM.ViewPercent);
-                    }
-#else
                     DeviceView deviceView = new DeviceView(deviceid);
                     mainWVM.DeviceViews.Add(deviceView);
                     await deviceView.Start();
                     deviceView.SliderChange(mainWVM.ViewPercent);
-#endif
                 }
             }
             catch (Exception ex)
@@ -282,6 +273,11 @@ namespace AndroidSyncControl.UI
                 Button button = sender as Button;
                 using (DeviceView deviceView = button.DataContext as DeviceView)
                 {
+                    // Null the bound ScrcpyUiView/Control BEFORE removing from the collection so the
+                    // binding propagates null to the ScrcpyControl synchronously (same as the main panel).
+                    // Otherwise Remove() freezes the binding, the control keeps the ScrcpyUiView, and the
+                    // next CompositionTarget.Rendering tick calls GetScreenSize() on the disposed scrcpy → crash.
+                    deviceView.DetachView();
                     mainWVM.DeviceViews.Remove(deviceView);
                     deviceView.Stop();
                 }
