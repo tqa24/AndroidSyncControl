@@ -7,6 +7,8 @@ A **timeline read bottom-to-top**: each `## [M.m.0]` is the tag that opened a mi
 commits stacked ABOVE it are that line's successive versions `M.m.1`, `M.m.2`, ... (patch number =
 commits since the tag), newest on top. Each line shows its version, conventional type, and message.
 
+- 1.0.6 *(feat)* Auto-size toolbar buttons and raise view slider to 150%
+- 1.0.5 *(fix)* Sync Android device clipboard to the PC clipboard
 - 1.0.4 *(fix)* Prevent crash when disconnecting a device in the list view
 - 1.0.3 *(feat)* Add English/Vietnamese UI localization
 - 1.0.2 *(docs)* Use English labels in README.md toolbar reference
