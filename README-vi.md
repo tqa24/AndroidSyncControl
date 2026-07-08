@@ -65,7 +65,7 @@ Tải bản mới nhất tại trang [**Releases**](https://github.com/tqk2811/A
 
 | Điều khiển | Chức năng |
 |------------|-----------|
-| **Size** | Tỉ lệ hiển thị màn hình xem trước (1–100%). |
+| **Size** | Tỉ lệ hiển thị màn hình xem trước (1–150%). |
 | **MaxFps** | Giới hạn FPS video (1–120). Áp dụng ở lần kết nối kế tiếp. |
 | **MaxSize** | Giới hạn cạnh dài nhất của video (px, bội số 8). Dưới 360 = kích thước gốc. Áp dụng khi kết nối lại. |
 | **GPU** | Bật: giải mã phần cứng D3D11VA. Tắt: giải mã bằng CPU. Áp dụng khi kết nối lại. |

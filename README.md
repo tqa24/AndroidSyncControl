@@ -65,7 +65,7 @@ page (`AndroidSyncControl-<version>-net8.0-windows.zip`). No installation requir
 
 | Control | What it does |
 |---------|--------------|
-| **Size** | Scale of the device previews (1–100%). |
+| **Size** | Scale of the device previews (1–150%). |
 | **MaxFps** | Caps the video frame rate (1–120). Applied on the next connection. |
 | **MaxSize** | Caps the longest video edge in pixels (multiple of 8). Below 360 = native size. Applied on reconnect. |
 | **GPU** | On: hardware decode via D3D11VA. Off: CPU decode. Applied on reconnect. |
